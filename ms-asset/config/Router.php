@@ -6,8 +6,6 @@ use AltoRouter;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\ErrorHandler;
 use App\MsAsset\Controllers\AssetController;
-use http\Env\Request;
-use Psr\Log\LoggerInterface;
 
 class Router
 {
@@ -20,26 +18,24 @@ class Router
 
     public function setupRoutes(AssetController $assetController): void
     {
+        // Middleware yang digunakan
         $authMiddleware = new AuthMiddleware();
-
         $middlewares = [
             [$authMiddleware, 'handle'],
         ];
 
-        $this->router->map('POST', '/assets', applyMiddleware($middlewares, [$assetController, 'createAsset']));
-        $this->router->map('GET', '/assets', applyMiddleware($middlewares, [$assetController, 'listAssets']));
+        // Rute dengan middleware
+        $this->router->map('POST', '/assets', $this->applyMiddleware($middlewares, [$assetController, 'createAsset']));
+        $this->router->map('GET', '/assets', $this->applyMiddleware($middlewares, [$assetController, 'listAssets']));
 
-
-//        $this->router->map('POST', '/register', [$userController, 'register']);
-//        $this->router->map('POST', '/login', [$userController, 'login']);
-//        $this->router->map('GET', '/profile', function () use ($userController,) {
-//            $authMiddleware = new AuthMiddleware();
-//            $request = $_SERVER;
-//            $next = function ($request, $userData) use ($userController) {
-//                $userController->profile($userData);
-//            };
-//            $authMiddleware->handle($request, $next);
-//        });
+        $this->router->map('GET', '/assets/[i:id]', function ($id) use ($assetController, $authMiddleware) {
+            $request = $_SERVER;
+            $next = function ($request, $userData) use ($assetController, $id) {
+                // Pass user data and asset ID to the controller method
+                $assetController->detailAsset($id, $userData);
+            };
+            $authMiddleware->handle($request, $next);
+        });
     }
 
     public function matchAndDispatch()
@@ -47,19 +43,18 @@ class Router
         $match = $this->router->match();
 
         if ($match && is_callable($match['target'])) {
-            call_user_func_array($match['target'], $match['params']);
+            $params = $match['params'];
+            call_user_func_array($match['target'], $params);
         } else {
             ErrorHandler::handle404();
         }
     }
-}
-
-
-function applyMiddleware(array $middlewares, $handler)
-{
-    return array_reduce(array_reverse($middlewares), function ($next, $middleware) {
-        return function () use ($next, $middleware) {
-            call_user_func_array($middleware, [$_SERVER, $next]);
-        };
-    }, $handler);
+    private function applyMiddleware(array $middlewares, $handler)
+    {
+        return array_reduce(array_reverse($middlewares), function ($next, $middleware) {
+            return function () use ($next, $middleware) {
+                call_user_func_array($middleware, [$_SERVER, $next]);
+            };
+        }, $handler);
+    }
 }

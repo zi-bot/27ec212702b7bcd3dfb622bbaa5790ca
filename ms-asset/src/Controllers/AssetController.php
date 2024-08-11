@@ -49,9 +49,9 @@ class AssetController
         Response::success($assets);
     }
 
-    public function getAssetById(int $id): void
+    public function detailAsset($id): void
     {
-        $asset = $this->assetService->getAssetById($id);
+        $asset = $this->assetService->getAssetById(1);
         if (is_null($asset)) {
             ErrorHandler::handle404("asset not found");
             return;

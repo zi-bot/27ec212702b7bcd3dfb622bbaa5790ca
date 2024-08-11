@@ -2,10 +2,14 @@
 
 namespace App\Middleware;
 
+use App\Logger\LoggerService;
+
 class ErrorHandler
 {
     public static function handle(\Throwable $e):void
     {
+        $logger = LoggerService::getInstance();
+        $logger->error($e);
         http_response_code(500);
         header('Content-Type: application/json');
         echo json_encode([

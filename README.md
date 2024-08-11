@@ -16,58 +16,43 @@ Make sure you have the following installed:
 1. Clone the repository:
 
 ``` bash
-git clone https://github.com/zi-bot/simple-gin-rest.git
+git clone https://github.com/zi-bot/27ec212702b7bcd3dfb622bbaa5790ca.git
 ```
 2. Navigate to the project directory:
 
 ```bash
-cd simple-gin-rest
+cd 27ec212702b7bcd3dfb622bbaa5790ca
 ```
 3. Install dependencies:
 
 ```bash
-make tidy
+make install
+```
+4. Update dependencies:
+```bash
+make update
 ```
 4. Start the server:
 ```bash
-make run
+make serve-all
 ```
 The server should now be running at http://localhost:8080.
+The server should now be running at http://localhost:8081.
 
-### Run with Docker
-1. Build the image:
-```bash
-make docker-build
-```
-2. Run the container:
-```bash
-make docker-run
-```
-### Run Testing
-```bash
-make test
-```
 ##### You can also hit endpoint directly with file [test.http](./test.http)
 
 ## API Endpoints
 
 ### List Assets
 ```http
-GET /assets?page=<page_number>&limit=<items_per_page>
+GET /assets
 ```
-Returns a list of assets with pagination support.
-
-#### Parameters
-
-| Query | Type | Description |
-| :--- | :--- | :--- |
-| `page` (Optional) | `int` | Page number (default: 1)|
-| `limit` (optional)| `int` | Number of items per page (default: 10) |
+Returns a list of assets.
 
 #### Request:
 
 ```http
-GET http://localhost:8080/assets?page=1&limit=5
+GET http://localhost:8081/assets
 ```
 #### Response:
 
@@ -77,45 +62,36 @@ Content-Type: application/json; charset=utf-8
 Date: Sun, 14 Jul 2024 09:21:15 GMT
 Content-Length: 901
 Connection: close
+GET http://localhost:8001/assets
+
+HTTP/1.1 200 OK
+Host: localhost:8001
+Date: Sun, 11 Aug 2024 14:30:42 GMT
+Connection: close
+X-Powered-By: PHP/8.3.7
+Content-Type: application/json
+
 {
-  "data": [
-    {
-      "id": 1,
-      "name": "Chair",
-      "type": "Furniture",
-      "acquisition_date": null
-    },
-    {
-      "id": 2,
-      "name": "Desk",
-      "type": "Furniture",
-      "acquisition_date": null
-    },
-    {
-      "id": 3,
-      "name": "Laptop",
-      "type": "Electronics",
-      "acquisition_date": null
-    },
-    {
-      "id": 4,
-      "name": "Phone",
-      "type": "Electronics",
-      "acquisition_date": null
-    },
-    {
-      "id": 5,
-      "name": "Table",
-      "type": "Furniture",
-      "acquisition_date":"2024-07-14T00:00:00Z"
-    }
-  ],
-  "pagination": {
-    "limit": 5,
-    "page": 1,
-    "total": 10
-  }
+    "status": "success",
+    "message": "ok",
+    "data": [
+        {
+            "id": 1,
+            "name": "Lemari",
+            "value": 12.5,
+            "owner_id": 1,
+            "owner_name": "andi"
+        },
+        {
+            "id": 2,
+            "name": "Lemari",
+            "value": 12.5,
+            "owner_id": 1,
+            "owner_name": "andi"
+        }
+    ]
 }
+
 ```
 ### Detail Assets
 ```http
@@ -138,17 +114,21 @@ GET http://localhost:8080/assets/1
 
 ```json
 HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-Date: Sun, 14 Jul 2024 09:21:15 GMT
-Content-Length: 901
+Host: localhost:8001
+Date: Sun, 11 Aug 2024 14:42:06 GMT
 Connection: close
+X-Powered-By: PHP/8.3.7
+Content-Type: application/json
+
 {
-  "data": 
-    {
-      "id": 1,
-      "name": "Chair",
-      "type": "Furniture",
-      "acquisition_date": null
+    "status": "success",
+    "message": "ok",
+    "data": {
+        "id": 1,
+        "name": "Lemari",
+        "value": 12.5,
+        "owner_id": 1,
+        "owner_name": "andi"
     }
 }
 ```
@@ -162,118 +142,43 @@ Creates a new asset.
 
 ```json
 {
-  "name": "Chair",
-  "type": "Furniture",
-  "value":100.1,
-  "acquisition_date":null
+    "value": 12.5,
+    "name": "Lemari"
 }
 ```
 #### Example Request :
 
 ```json
+POST http://localhost:8001/assets
+Content-Type: application/json
+Authorization: Bearer {{token}}
+Content-Length: 39
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.1.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+    "value": 12.5,
+    "name": "Lemari"
+}
+```
+#### Response:
+
+```json
 POST http://localhost:8080/assets
-Content-Type: application/json
-
-{
-  "name": "Chair",
-  "type": "Furniture",
-  "value":100.1,
-  "acquisition_date":null
-}
-```
-#### Response:
-
-```http
 HTTP/1.1 201 Created
-Content-Type: application/json; charset=utf-8
-Date: Sun, 14 Jul 2024 09:19:54 GMT
-Content-Length: 40
+Host: localhost:8001
+Date: Sun, 11 Aug 2024 14:53:31 GMT
 Connection: close
-
-{
-  "message": "Asset created successfully"
-}
-```
-### Update Asset
-```http
-PUT /assets/:id
-```
-Updates an existing asset by ID.
-
-#### Parameters
-
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `id` (Required) | `int` | Asset Id|
-
-#### Request Body
-
-```json
-{
-  "name": "Chair",
-  "type": "Furniture",
-  "value":100.1,
-  "acquisition_date":"2024-07-13"
-}
-```
-#### Example Request:
-
-```http
-PUT http://localhost/assets/6
+X-Powered-By: PHP/8.3.7
 Content-Type: application/json
 
 {
-  "name": "Chair Updated",
-  "type": "Furniture",
-  "value": 100.1,
-  "acquisition_date": "2024-07-13"
+    "status": "success",
+    "message": "Asset created"
 }
 ```
-#### Response:
-
-```json
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-Date: Sun, 14 Jul 2024 09:24:59 GMT
-Content-Length: 114
-Connection: close
-{
-  "id": 6,
-  "name": "Chair Updated",
-  "type": "Furniture",
-  "value": 100.1,
-  "acquisition_date": "2024-07-13"
-}
-```
-### Delete Asset
-```http
-DELETE /assets/:id
-```
-Deletes an asset by ID.
-
-#### Parameters
-
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `id` (Required) | `int` | Asset Id|
-
-#### Example Request:
-```http
-DELETE http://localhost:8080/assets/6
-```
-#### Response:
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-Date: Sun, 14 Jul 2024 09:30:04 GMT
-Content-Length: 40
-Connection: close
-
-{
-  "message": "Asset deleted successfully"
-}
-```
-#### Error Handling
+## Error Handling
 ### 400 Bad request
 ```json
 HTTP/1.1 400 Bad Request

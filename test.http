@@ -12,76 +12,37 @@ POST http://localhost:8000/login
 Content-Type: application/json
 
 {
-"username": "andi",
-"password": "testPassword"
+  "username": "andi",
+  "password": "testPassword"
 }
+
+> {%
+    client.test("Request executed successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.global.set("token", response.body.data.access_token);
+    });
+%}
 
 ### Profile
 GET http://localhost:8000/profile
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFuZGkiLCJ1c2VyX2lkIjoxLCJpYXQiOjE3MjMzODAwNTgsImV4cCI6MTcyMzM4MzY1OH0.rwzKGlBRNMho-tbeuOj4rCGGvkmH0KcIbKS1aCek3bk
+Authorization: Bearer {{token}}
 
 
 ### Get All Assets
 GET http://localhost:8001/assets
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFuZGkiLCJ1c2VyX2lkIjoxLCJpYXQiOjE3MjMzODAwNTgsImV4cCI6MTcyMzM4MzY1OH0.rwzKGlBRNMho-tbeuOj4rCGGvkmH0KcIbKS1aCek3bk
+Authorization: Bearer {{token}}
 
 
 ### Create Assets
 POST http://localhost:8001/assets
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFuZGkiLCJ1c2VyX2lkIjoxLCJpYXQiOjE3MjMzODAwNTgsImV4cCI6MTcyMzM4MzY1OH0.rwzKGlBRNMho-tbeuOj4rCGGvkmH0KcIbKS1aCek3bk
+Authorization: Bearer {{token}}
 
 {
   "value": 12.5,
   "name": "Lemari"
 }
 ### Get a Single Asset by ID
-GET http://localhost:8080/assets/1
-
-### Update an Asset
-PUT http://localhost:8080/assets/2
-Content-Type: application/json
-
-{
-  "name": "Updated Chair",
-  "type": "Furniture",
-  "value": 1100.0,
-  "acquisition_date": "2024-07-14"
-}
-
-### Delete an Asset
-DELETE http://localhost:8080/assets/1
-
-
-
-### Create an Asset
-POST http://localhost:8080/assets
-Content-Type: application/json
-
-{
-  "name": "Chair",
-  "type": "Furniture",
-  "value": 1000.5,
-  "acquisition_date": null
-}
-
-### Get All Assets (with pagination)
-GET http://localhost:8080/assets?page=1&limit=10
-
-### Get a Single Asset by ID
-GET http://localhost:8080/assets/1
-
-### Update an Asset
-PUT http://localhost:8080/assets/2
-Content-Type: application/json
-
-{
-  "name": "Updated Chair",
-  "type": "Furniture",
-  "value": 1100.0,
-  "acquisition_date": "2024-07-14"
-}
-
-### Delete an Asset
-DELETE http://localhost:8080/assets/1
+GET http://localhost:8001/assets/1
+Authorization: Bearer {{token}}
