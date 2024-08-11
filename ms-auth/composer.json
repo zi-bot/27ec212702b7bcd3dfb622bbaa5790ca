@@ -1,0 +1,27 @@
+{
+  "require": {
+    "doctrine/orm": "^2.11",
+    "doctrine/migrations": "^3.3",
+    "altorouter/altorouter": "^2.0",
+    "symfony/cache": "^7.1",
+    "jms/serializer": "^3.30",
+    "predis/predis": "^2.2",
+    "monolog/monolog": "^3.7",
+    "firebase/php-jwt": "^6.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\MsAuth\\": "src/",
+      "App\\Middleware\\": "../common/Middleware/",
+      "App\\Response\\": "../common/Response/",
+      "App\\Redis\\": "../common/Redis/",
+      "App\\Logger\\": "../common/Logger/",
+      "App\\MsAuth\\Config\\": "config"
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "Doctrine\\ORM\\Tools\\Console\\ConsoleRunner::postInstallCmd"
+    ]
+  }
+}
