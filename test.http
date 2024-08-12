@@ -3,7 +3,7 @@ POST http://localhost:8000/register
 Content-Type: application/json
 
 {
-  "username": "andi",
+  "username": "andi1",
   "password": "testPassword"
 }
 

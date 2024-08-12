@@ -36,7 +36,7 @@ class UserController
             ErrorHandler::handle400(USERNAME_ALREADY_EXISTS);
             return;
         }
-        Response::success($result);
+        Response::success(null, code:201,msg: "User registered successfully");
     }
 
     public function login(): void
